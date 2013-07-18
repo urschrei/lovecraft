@@ -3,7 +3,7 @@
 """
 I scraped the text from http://gutenberg.net.au/ebooks06/0600031h.html
 wc -w gives the count as 499143 words
-
+fd nouns are unicode strings, you may have to encode them for output
 """
 import string
 import nltk
@@ -15,6 +15,7 @@ fd = nltk.FreqDist()
 # we want to keep the dash/minus, since en and em aren't used in the text
 punc = [char for char in string.punctuation]
 punc.remove('-')
+punc.remove('.')
 with open("lovecraft.txt", 'r') as f:
     for line in f:
         inp = line.translate(None, ''.join(punc)).lower().decode('utf8')
@@ -23,4 +24,4 @@ with open("lovecraft.txt", 'r') as f:
             # we really only want nouns
             nouns = [word for word in tagged if word[1] == 'NN']
             if nouns:
-                [fd.inc(noun[0].encode('utf8')) for noun in nouns]
+                [fd.inc(noun[0]) for noun in nouns]
