@@ -1,4 +1,4 @@
-#/usr/bin/env/python
+#/usr/bin/env python
 
 import os
 import string
@@ -25,7 +25,9 @@ def classify():
         soup = BeautifulSoup(
             requests.get("http://gutenberg.net.au/ebooks06/0600031h.html").text)
         # leading and trailing paras don't contain anything useful
-        text = tuple(sec.get_text().encode('utf8') for sec in soup.find_all('p')[4:-5])
+        # translate() is a pain with Unicode
+        text = tuple(
+            sec.get_text().encode('utf8') for sec in soup.find_all('p')[4:-5])
         for line in text:
             inp = line.translate(None, ''.join(punc)).lower().decode('utf8')
             for sent in nltk.sent_tokenize(inp):
@@ -47,7 +49,6 @@ def restrict(tagged_sentences, tags):
     returns an NLTK frequency distribution object
 
     """
-
     fd = nltk.FreqDist()
     for classified in tagged_sentences:
         words = [word for word in classified if word[1] in tags]
@@ -64,7 +65,6 @@ permitted_tags = set([
     'NNPS',
     'UH',
 ])
-
 
 counts = restrict(classify(), permitted_tags)
 # Let's do some plotting
