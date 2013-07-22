@@ -25,7 +25,7 @@ def classify():
         soup = BeautifulSoup(
             requests.get("http://gutenberg.net.au/ebooks06/0600031h.html").text)
         # leading and trailing paras don't contain anything useful
-        text = tuple(sec.get_text() for sec in soup.find_all('p')[4:-5])
+        text = tuple(sec.get_text().encode('utf8') for sec in soup.find_all('p')[4:-5])
         for line in text:
             inp = line.translate(None, ''.join(punc)).lower().decode('utf8')
             for sent in nltk.sent_tokenize(inp):
@@ -71,7 +71,8 @@ counts = restrict(classify(), permitted_tags)
 plt.xkcd()
 counts.plot(100, color='r')
 plt.xlabel("Nouns")
-plt.tick_params(axis='x', which='both', top='off')
-plt.title("100 most frequently-occurring words in 'The Collected Works of H. P. Lovecraft'")
+plt.tick_params(axis='x', which='both', top='off', labelsize=10)
+plt.title(
+    "100 most frequently-occurring words in 'The Collected Works of H. P. Lovecraft'")
 plt.tight_layout()
 # Now manually resize the graph horizontally, and call tight_layout again
