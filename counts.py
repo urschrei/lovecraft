@@ -5,7 +5,7 @@ import string
 import requests
 from bs4 import BeautifulSoup
 import nltk
-import pickle
+import cPickle as pickle
 import matplotlib.pyplot as plt
 
 
@@ -42,7 +42,8 @@ def classify():
             # Time-consuming it is!
             pass
     else:
-        cleanup = pickle.load('results.pickle')
+        with open("results.pickle", 'r') as f:
+            cleanup = pickle.load(f)
     return cleanup
 
 
