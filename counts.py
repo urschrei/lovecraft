@@ -2,34 +2,35 @@
 
 import os
 import string
+import requests
+from bs4 import BeautifulSoup
 import nltk
 import pickle
 import matplotlib.pyplot as plt
 
 
-# read in the corpus, remove punctuation, and convert it all to lowercase
-# this is slightly slower than reading the entire file into memory
-# but it's more memory-efficient by far
-# we want to keep the dash/minus, since en and em aren't used in the text
-def classify(filename):
+def classify():
     """
-    read in the corpus, remove punctuation, and convert it all to lowercase
-    this is slightly slower than reading the entire file into memory
+    Read in the corpus, remove punctuation, and convert it all to lowercase
+    This is slightly slower than reading the entire file into memory
     but it's more memory-efficient by far
-    we want to keep the dash/minus, since en and em aren't used in the text
-    tag the tokenized sentences, and append them to a list
+    We want to keep the dash/minus, since en and em aren't used in the text
+
     """
     punc = [char for char in string.punctuation]
     punc.remove('-')
     punc.remove('.')
     if not os.path.isfile('results.pickle'):
         cleanup = []
-        with open(filename, 'r') as f:
-            for line in f:
-                inp = line.translate(None, ''.join(punc)).lower().decode('utf8')
-                for sent in nltk.sent_tokenize(inp):
-                    tagged = nltk.pos_tag(nltk.word_tokenize(sent))
-                    cleanup.append(tagged)
+        soup = BeautifulSoup(
+            requests.get("http://gutenberg.net.au/ebooks06/0600031h.html").text)
+        # leading and trailing paras don't contain anything useful
+        text = tuple(sec.get_text() for sec in soup.find_all('p')[4:-5])
+        for line in text:
+            inp = line.translate(None, ''.join(punc)).lower().decode('utf8')
+            for sent in nltk.sent_tokenize(inp):
+                tagged = nltk.pos_tag(nltk.word_tokenize(sent))
+                cleanup.append(tagged)
         # classification is time-consuming. Let's save our results
         with open('results.pickle', 'w') as out:
             pickle.dump(cleanup, out)
@@ -63,7 +64,9 @@ permitted_tags = set([
     'NNPS',
     'UH',
 ])
-counts = restrict(classify('lovecraft.txt'), permitted_tags)
+
+
+counts = restrict(classify(), permitted_tags)
 # Let's do some plotting
 plt.xkcd()
 counts.plot(100, color='r')
@@ -72,4 +75,3 @@ plt.tick_params(axis='x', which='both', top='off')
 plt.title("100 most frequently-occurring words in 'The Collected Works of H. P. Lovecraft'")
 plt.tight_layout()
 # Now manually resize the graph horizontally, and call tight_layout again
-
