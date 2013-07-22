@@ -20,6 +20,7 @@ def classify():
     punc = [char for char in string.punctuation]
     punc.remove('-')
     punc.remove('.')
+    # don't do this in production, because race conditions and security and that
     if not os.path.isfile('results.pickle'):
         cleanup = []
         soup = BeautifulSoup(
