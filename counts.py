@@ -35,8 +35,12 @@ def classify():
                 tagged = nltk.pos_tag(nltk.word_tokenize(sent))
                 cleanup.append(tagged)
         # classification is time-consuming. Let's save our results
-        with open('results.pickle', 'w') as out:
-            pickle.dump(cleanup, out)
+        try:
+            with open('results.pickle', 'w') as out:
+                pickle.dump(cleanup, out)
+        except IOError:
+            # Time-consuming it is!
+            pass
     else:
         cleanup = pickle.load('results.pickle')
     return cleanup
@@ -71,7 +75,7 @@ counts = restrict(classify(), permitted_tags)
 # Let's do some plotting
 plt.xkcd()
 counts.plot(100, color='r')
-plt.xlabel("Nouns")
+plt.xlabel("Words")
 plt.tick_params(axis='x', which='both', top='off', labelsize=10)
 plt.title(
     "100 most frequently-occurring words in 'The Collected Works of H. P. Lovecraft'")
