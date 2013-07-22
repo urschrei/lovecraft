@@ -11,7 +11,7 @@ The script will write a file, `results.pickle`, to your current working director
 - NLTK
 - Matplotlib 1.4.x
 
-You may have to install Matplotlib from Github, as 1.4 has not been released as of late July 2013, and you'll need it for the XKCD-style graphs.
+You may have to install Matplotlib from Github, as 1.4 has not been released as of late July 2013, and you'll need it (and Humor Sans) for the [XKCD-style graphs](http://jakevdp.github.io/blog/2013/07/10/XKCD-plots-in-matplotlib/).
 
 ## License
 
