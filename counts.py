@@ -59,7 +59,8 @@ def restrict(tagged_sentences, tags):
     for classified in tagged_sentences:
         words = [word for word in classified if word[1] in tags]
         if words:
-            [fd.inc(word[0]) for word in words]
+            for word in words:
+                fd[word[0]] += 1
     return fd
 
 permitted_tags = set([
@@ -73,6 +74,7 @@ permitted_tags = set([
 ])
 
 counts = restrict(classify(), permitted_tags)
+
 # Let's do some plotting
 plt.xkcd()
 counts.plot(100, color='r')
